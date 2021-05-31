@@ -1,35 +1,58 @@
 /* src/assets/css/app.css */
 
 /* Main CSS stylesheet */
-html,
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  /* box-sizing: border-box; */
+  /* vertical-align: baseline; */
+  border-collapse: separate;
+  border-spacing: 0;
+}
+:root {
+  --background: '#222';
+  --highlight: '#affec7';
+  --f_high: '#fff';
+  --f_med: '#777';
+  --f_low: '#444';
+  --g_size: 20;
 }
 
-body {
-  font-size: 16px;
+#app {
+  display: flex;
+  padding: calc(var(--g_size) * 2 * 1px);
+  color: var(--f_low);
+  background-color: var(--background); 
+  margin: calc(50vh - var(--g_size) * 23 / 2 * 1px ) auto;
+  max-width: calc(var(--g_size) * 23 * 1px);
+  height: calc(14.5 * var(--g_size) * 1px);
+  width: calc(100% - var(--g_size) * 4 * 1px); /* 100% - 2 * padding */
 }
 
-@media screen and (prefers-color-scheme: light), screen and (prefers-color-scheme: no-preference) {
-  /* Light moe */
-  body {
-    color: #000;
-    background-color: #fff;
-  }
+td {
+  width: var(--g_size * 1px);
+  height: var(--g_size * 1px);
 }
 
-@media screen and (prefers-color-scheme: dark) {
-  /* Dark moe */
-  body {
-    color: #fff;
-    background-color: #000;
-  }
+.date {
+  color: var(--f_high);
 }
 
-h1 {
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 21px;
-  font-weight: 200;
+.name {
+  width: var(--g_size * 4 * 1px);
+  height: var(--g_size * 1px);
 }
+
+.selected_name {
+  color: var(--f_high);
+}
+
+.selected_row > td {
+  color: var(--f_med);
+}
+
+.yay {
+  color: var(--highlight);
+}
+
