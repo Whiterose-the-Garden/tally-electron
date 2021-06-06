@@ -1,11 +1,15 @@
 import React from 'react'
+import Table from './Table'
 
-const App = () => (
-  <div>
-    <h1>Hello, electron!</h1>
-    <p>Let's start building your awesome desktop app with electron and React!</p>
-  </div>
-)
+class App extends React.component {
+
+  render() {
+    return (
+      <div id='app'>
+        <Table /> 
+      </div>
+    )
+  }
+}
 
 export default App
-
