@@ -10,6 +10,7 @@
   border-collapse: separate;
   border-spacing: 0;
 }
+
 :root {
   --background: '#222';
   --highlight: '#affec7';
@@ -44,15 +45,28 @@ td {
   height: var(--g_size * 1px);
 }
 
-.selected_name {
-  color: var(--f_high);
-}
 
 .selected_row > td {
   color: var(--f_med);
 }
 
+td {
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  flex-direction: column;
+}
+
+td:first-child {
+  text-align: right;
+}
+
+tr.selected_row > td:first-child {
+  color: var(--f_high);
+}
+
 .yay {
-  color: var(--highlight);
+  color: var(--highlight) /* !important */;
 }
 
