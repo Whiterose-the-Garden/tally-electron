@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "electron-store": "^8.0.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },

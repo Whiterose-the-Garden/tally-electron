@@ -1,18 +1,14 @@
 import React from 'react'
-import Table from './Habit'
 
-class Habit extends React.Components {
-
-  render() {
-    return (
-      <tr>
-        <td>
-          props.name 
-        </td>
-        <Streak displayDates={props.displayDates} streak={props.streak}/>
-      </tr>
-    )
-  }
+function Habit(props) {
+  return (
+    <tr>
+      <td>
+        props.name 
+      </td>
+      <Streak displayDates={props.displayDates} streak={props.streak}/>
+    </tr>
+  )
 }
 
 function Streak(props) {
