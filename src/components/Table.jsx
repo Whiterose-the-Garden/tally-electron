@@ -2,9 +2,7 @@ import React from 'react'
 import Habit from './Habit.jsx'
 
 function Table(props) {
-  console.log(props)
   const habitList = props.habits.map((h) => {
-    // console.log(h)
     return (
       <Habit 
         key={h.name}

@@ -9,10 +9,10 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     const store = new Store()
-    console.log(store.store);
     this.state = {
       curr_date: Date.now(),
       h_idx: 0,
+      date_len: 14,
       view_range: [0,10],
       range_len: 10,
       habits: this.toHabitList(store.store),
@@ -82,7 +82,7 @@ class App extends React.Component {
   //   const d = Date.now()
   // }
 
-  sameDate(d1, d2) {
+  sameDate = (d1, d2) => {
     return (
       d1.getDay() == d2.getDate() ||
       d1.getMonth() == d2.getMonth() ||
@@ -90,13 +90,26 @@ class App extends React.Component {
     )
   }
 
+  getDisplayDates = () => {
+    let { curr_date, date_len } = this.state
+    const displayDates = []
+    let d = new Date(curr_date)
+    while(date_len--) {
+      displayDates.push(d) 
+      d = new Date(d)
+      d.setDate(d.getDate() - 1)
+    }
+    return displayDates
+  }
+
   render() {
-    const { view_range, habits, curr_date } = this.state
+    const { view_range, habits } = this.state
+    const displayDates = this.getDisplayDates()
     return (
       <div id='app'>
         <Table 
           habits={habits.slice(view_range[0], view_range[1])}
-          displayDates={curr_date}
+          displayDates={displayDates}
         /> 
       </div>
     )

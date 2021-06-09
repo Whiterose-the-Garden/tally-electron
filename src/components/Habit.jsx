@@ -18,9 +18,9 @@ function Streak(props) {
   for (let i in displayDates) {
     let d = displayDates[i]
     if (j < streak.length && sameDate(d, streak[j])) {
-      streakList.push(<td key={d.getDay()} className={"yay"}>·</td>)
+      streakList.push(<td key={d.getDate()} className={"yay"}>·</td>)
     } else {
-      streakList.push(<td key={d.getDay()}>·</td>)
+      streakList.push(<td key={d.getDate()}>·</td>)
     }
     j += 1
   }

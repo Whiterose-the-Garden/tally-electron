@@ -1,5 +1,20 @@
 /* src/assets/css/app.css */
 
+@font-face {
+    font-family: 'input_mono_regular';
+    src: url('../fonts/input_mono_regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'input_mono_medium';
+    src: url('../fonts/input_mono_medium.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+
 /* Main CSS stylesheet */
 * {
   margin: 0;
@@ -29,6 +44,11 @@
   max-width: calc(var(--g_size) * 23 * 1px);
   height: calc(14.5 * var(--g_size) * 1px);
   width: calc(100% - var(--g_size) * 4 * 1px); /* 100% - 2 * padding */
+  font-family: 'input_mono_regular';
+}
+
+b {
+  font-family: 'input_mono_medium';
 }
 
 td {
