@@ -4,7 +4,7 @@ function Habit(props) {
   return (
     <tr>
       <td>
-        props.name 
+        {props.name}
       </td>
       <Streak displayDates={props.displayDates} streak={props.streak}/>
     </tr>
@@ -12,7 +12,7 @@ function Habit(props) {
 }
 
 function Streak(props) {
-  const {streak, displayDates} = props.date 
+  const {streak, displayDates} = props 
   const streakList = []
   let j = 0
   for (let i in displayDates) {

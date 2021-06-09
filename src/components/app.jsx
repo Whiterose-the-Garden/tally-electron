@@ -9,35 +9,39 @@ class App extends React.Component {
   constructor(props) {
     super(props)
     const store = new Store()
+    console.log(store.store);
     this.state = {
       curr_date: Date.now(),
       h_idx: 0,
       view_range: [0,10],
       range_len: 10,
-      habits: toHabitList(store.store),
+      habits: this.toHabitList(store.store),
     }
   }
 
   toHabitList = (store) => {
     return Object.keys(store)
-      .map((name) => {
-        return {
-          name,
-          streak: store[name].streak,
+      .reduce((acc, name) => {
+        if (name !== "__internal__") {
+          acc.push({
+            name,
+            streak: store[name].streak,
+          })
         }
-      })
+        return acc
+      }, [])
   }
 
   componentDidMount() {
-    Mousetrap.bind('j')
-    Mousetrap.bind('k')
-    Mousetrap.bind(':')
+    // Mousetrap.bind('j')
+    // Mousetrap.bind('k')
+    // Mousetrap.bind(':')
   }
 
   componentWillUnmount() {
-    Mousetrap.unbind('j')
-    Mousetrap.unbind('k')
-    Mousetrap.unbind(':')
+    // Mousetrap.unbind('j')
+    // Mousetrap.unbind('k')
+    // Mousetrap.unbind(':')
   }
 
   down = () => {
@@ -89,7 +93,7 @@ class App extends React.Component {
   render() {
     const { view_range, habits, curr_date } = this.state
     return (
-      <div id='app' 
+      <div id='app'>
         <Table 
           habits={habits.slice(view_range[0], view_range[1])}
           displayDates={curr_date}
