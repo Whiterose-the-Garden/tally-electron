@@ -45,8 +45,8 @@ body {
   color: var(--f_low);
   background-color: var(--background);
   margin: calc(50vh - var(--g_size) * 23 / 2 * 1px ) auto;
-  max-width: calc(var(--g_size) * 23 * 1px);
-  height: calc(14.5 * var(--g_size) * 1px);
+  max-width: calc(var(--g_size) * 19 * 1px);
+  height: calc(11.5 * var(--g_size) * 1px);
   width: calc(100% - var(--g_size) * 4 * 1px); /* 100% - 2 * padding */
   font-family: 'input_mono_regular';
 }
@@ -65,7 +65,7 @@ b {
 }
 
 
-.selected_row > td {
+.selected > td {
   color: var(--f_med);
 }
 
@@ -88,7 +88,7 @@ td:first-child {
   margin-right: calc(var(--g_size) * 1px);
 }
 
-tr.selected_row > td:first-child {
+tr.selected > td:first-child {
   color: var(--f_high);
 }
 

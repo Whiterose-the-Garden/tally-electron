@@ -2,7 +2,7 @@ import React from 'react'
 
 function Habit(props) {
   return (
-    <tr>
+    <tr className={props.selected ? 'selected' : ''}>
       <td>
         {props.name}
       </td>

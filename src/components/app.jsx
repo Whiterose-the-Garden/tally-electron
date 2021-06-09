@@ -33,14 +33,14 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    // Mousetrap.bind('j')
-    // Mousetrap.bind('k')
+    Mousetrap.bind('j', this.down)
+    Mousetrap.bind('k', this.up)
     // Mousetrap.bind(':')
   }
 
   componentWillUnmount() {
-    // Mousetrap.unbind('j')
-    // Mousetrap.unbind('k')
+    Mousetrap.unbind('j')
+    Mousetrap.unbind('k')
     // Mousetrap.unbind(':')
   }
 
@@ -52,8 +52,8 @@ class App extends React.Component {
       // only shift if not at end  
       this.setState({
         view_range: [
-          view_len[1] == tot_len ? view_len[0] : view_len[0]+1, 
-          view_len[1] == tot_len ? tot_len : view_len[1]+1
+          view_range[1] == tot_len ? view_range[0] : view_range[0]+1, 
+          view_range[1] == tot_len ? tot_len : view_range[1]+1
         ]
       })
     } else {
@@ -69,8 +69,8 @@ class App extends React.Component {
       // only shift if not at start
       this.setState({
         view_range: [
-          view_len[0] == 0 ? view_len[0] : view_len[0]-1, 
-          view_len[0] == 0 ? tot_len : view_len[1]-1
+          view_range[0] == 0 ? view_range[0] : view_range[0]-1, 
+          view_range[0] == 0 ? tot_len : view_range[1]-1
         ]
       })
     } else {
@@ -103,12 +103,14 @@ class App extends React.Component {
   }
 
   render() {
-    const { view_range, habits } = this.state
+    const { view_range, habits, h_idx } = this.state
+    const [start, end] = view_range
     const displayDates = this.getDisplayDates()
     return (
       <div id='app'>
         <Table 
-          habits={habits.slice(view_range[0], view_range[1])}
+          habits={habits.slice(start, end)}
+          h_idx={h_idx}
           displayDates={displayDates}
         /> 
       </div>
