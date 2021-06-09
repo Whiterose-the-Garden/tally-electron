@@ -7,9 +7,7 @@ const { app, BrowserWindow } = require('electron')
 const path = require('path')
 const url = require('url')
 const Store = require('electron-store')
-const store = new Store({
-  migrations: {}, 
-});
+Store.initRenderer()
 // Add React extension for development
 // const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer')
 

@@ -4,10 +4,11 @@ import Habit from './Habit.jsx'
 
 function Table(props) {
   const habitList = props.habits.map((h) => {
-    <Habit key={h.name} 
-      name={props.name} 
+    <Habit 
+      key={h.name} 
+      name={h.name} 
       displayDates={props.displayDates}
-      streak={props.streak}
+      streak={h.streak}
     />
   });
   return (
