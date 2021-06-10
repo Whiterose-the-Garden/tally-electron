@@ -1,5 +1,7 @@
 import React from 'react'
 import Table from './Table.jsx'
+import SelectedDate from './SelectedDate.jsx'
+import Command from './Command.jsx'
 
 const Mousetrap = require('mousetrap')
 const Store = require('electron-store')
@@ -10,12 +12,14 @@ class App extends React.Component {
     super(props)
     const store = new Store()
     this.state = {
-      curr_date: Date.now(),
+      curr_date: new Date(),
       h_idx: 0,
       date_len: 14,
       view_range: [0,10],
       range_len: 10,
       habits: this.toHabitList(store.store),
+      command: ':',
+      mode: 0
     }
   }
 
@@ -63,14 +67,13 @@ class App extends React.Component {
 
   up = () => {
     const { h_idx, view_range, habits, range_len } = this.state
-    const tot_len = habits.length
     // need to shift range
     if (h_idx == 0) {
       // only shift if not at start
       this.setState({
         view_range: [
           view_range[0] == 0 ? view_range[0] : view_range[0]-1, 
-          view_range[0] == 0 ? tot_len : view_range[1]-1
+          view_range[0] == 0 ? range_len : view_range[1]-1
         ]
       })
     } else {
@@ -102,8 +105,19 @@ class App extends React.Component {
     return displayDates
   }
 
+  onChange = (event) => {
+    this.setState({ command:event.target.value ? event.target.value : ':'}) 
+  }
+
   render() {
-    const { view_range, habits, h_idx } = this.state
+    const { 
+      view_range, 
+      habits, 
+      h_idx,
+      curr_date,
+      command,
+      mode
+    } = this.state
     const [start, end] = view_range
     const displayDates = this.getDisplayDates()
     return (
@@ -113,6 +127,12 @@ class App extends React.Component {
           h_idx={h_idx}
           displayDates={displayDates}
         /> 
+        <SelectedDate date={curr_date} />
+        <Command 
+          command={command} 
+          active={this.onChange}
+          onChange={this.onChange}
+        />
       </div>
     )
   }
