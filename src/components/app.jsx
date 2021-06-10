@@ -13,7 +13,7 @@ class App extends React.Component {
 
   constructor(props) {
     super(props)
-    const store = new Store()
+    this.store = new Store()
     this.commandRef = React.createRef()
     this.state = {
       curr_date: new Date(),
@@ -21,7 +21,7 @@ class App extends React.Component {
       date_len: 14,
       view_range: [0,10],
       range_len: 10,
-      habits: this.toHabitList(store.store),
+      habits: this.toHabitList(this.store.store),
       command: '',
       mode: TABLE
     }
@@ -44,22 +44,29 @@ class App extends React.Component {
     Mousetrap.bind('j', this.down)
     Mousetrap.bind('k', this.up)
     Mousetrap.bind(':', this.enterCommand)
-    // Mousetrap.bind('esc', this.exitCommand)
+    // Mousetrap.bind('enter', this.yay)
   }
 
   componentWillUnmount() {
     Mousetrap.unbind('j')
     Mousetrap.unbind('k')
     Mousetrap.unbind(':')
-    // Mousetrap.unbind('esc')
+    // Mousetrap.unbind('enter')
   }
 
-  
-
+  yay = () => {
+    const { h_idx, habits, view_range } = this.state
+    const h = habits[view_range[0] + h_idx]
+    const { streak } = this.store.get(h.name)
+    // if (streak.length === 0) {
+      
+    // }
+    // change in db
+    // reflect the change in view
+  } 
 
   enterCommand = () => {
     this.setState({ mode: COMMAND })
-    // console.log(this.commandRef.current)
     this.commandRef.current.focus()
   }
 
@@ -131,10 +138,21 @@ class App extends React.Component {
     }
   }
 
-  exitCommand = (event) => {   
-    const { mode } = this.state
-    if (event.code === "Escape" && mode === COMMAND) {
+  onKeyDown = (event) => {   
+    const { mode, command } = this.state
+    if (event.code === 'Escape') {
       this.setState({mode: TABLE, command: ''})
+    } else if (event.code === 'Enter') {
+      const com = command.split(' ')
+      if (com.length >= 2 && com[1].length <= 10) {
+        const inst = com[0], arg = com[1]
+        if (inst == ':add') {
+          this.store.set(com[1], {streak:[]})  
+        } else if (inst == ':del') {
+          this.store.delete(com[1])  
+        } 
+        this.setState({habits: this.toHabitList(this.store.store)})
+      } 
     }
   }
 
@@ -156,14 +174,16 @@ class App extends React.Component {
           h_idx={h_idx}
           displayDates={displayDates}
         /> 
-        <SelectedDate date={curr_date} />
-        <Command 
-          command={command} 
-          active={COMMAND === mode}
-          onChange={this.onChange}
-          onKeyDown={this.exitCommand}
-          commandRef={this.commandRef}
-        />
+        <div id='control'>
+          <SelectedDate date={curr_date} />
+          <Command 
+            command={command} 
+            active={COMMAND === mode}
+            onChange={this.onChange}
+            onKeyDown={this.onKeyDown}
+            commandRef={this.commandRef}
+          />
+        </div>
       </div>
     )
   }
