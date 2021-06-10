@@ -5,12 +5,16 @@ import Command from './Command.jsx'
 
 const Mousetrap = require('mousetrap')
 const Store = require('electron-store')
+const TABLE = 0 
+const COMMAND = 1
+const HABIT = 2 
 
 class App extends React.Component {
 
   constructor(props) {
     super(props)
     const store = new Store()
+    this.commandRef = React.createRef()
     this.state = {
       curr_date: new Date(),
       h_idx: 0,
@@ -18,8 +22,8 @@ class App extends React.Component {
       view_range: [0,10],
       range_len: 10,
       habits: this.toHabitList(store.store),
-      command: ':',
-      mode: 0
+      command: '',
+      mode: TABLE
     }
   }
 
@@ -39,13 +43,24 @@ class App extends React.Component {
   componentDidMount() {
     Mousetrap.bind('j', this.down)
     Mousetrap.bind('k', this.up)
-    // Mousetrap.bind(':')
+    Mousetrap.bind(':', this.enterCommand)
+    // Mousetrap.bind('esc', this.exitCommand)
   }
 
   componentWillUnmount() {
     Mousetrap.unbind('j')
     Mousetrap.unbind('k')
-    // Mousetrap.unbind(':')
+    Mousetrap.unbind(':')
+    // Mousetrap.unbind('esc')
+  }
+
+  
+
+
+  enterCommand = () => {
+    this.setState({ mode: COMMAND })
+    // console.log(this.commandRef.current)
+    this.commandRef.current.focus()
   }
 
   down = () => {
@@ -106,7 +121,21 @@ class App extends React.Component {
   }
 
   onChange = (event) => {
-    this.setState({ command:event.target.value ? event.target.value : ':'}) 
+    let value = event.target.value
+    if (!value) {
+      this.setState({command:':'})
+    } else if (value[0] != ':') {
+      this.setState({command:':' + value})
+    } else {
+      this.setState({command:value})
+    }
+  }
+
+  exitCommand = (event) => {   
+    const { mode } = this.state
+    if (event.code === "Escape" && mode === COMMAND) {
+      this.setState({mode: TABLE, command: ''})
+    }
   }
 
   render() {
@@ -116,7 +145,7 @@ class App extends React.Component {
       h_idx,
       curr_date,
       command,
-      mode
+      mode,
     } = this.state
     const [start, end] = view_range
     const displayDates = this.getDisplayDates()
@@ -130,8 +159,10 @@ class App extends React.Component {
         <SelectedDate date={curr_date} />
         <Command 
           command={command} 
-          active={this.onChange}
+          active={COMMAND === mode}
           onChange={this.onChange}
+          onKeyDown={this.exitCommand}
+          commandRef={this.commandRef}
         />
       </div>
     )

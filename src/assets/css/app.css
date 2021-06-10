@@ -75,6 +75,7 @@ input:focus {
 }
 
 .command {
+  display: none;
   width: calc(var(--g_size) * 8 * 1px);  
   height: calc(var(--g_size) * 1px);
   margin-left: calc(var(--g_size) * 5 * 1px);
@@ -85,7 +86,7 @@ input:focus {
 }
 
 .active {
-  
+  display: block; 
 }
 
 td {
