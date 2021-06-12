@@ -7,7 +7,7 @@ function Table(props) {
       <Habit 
         key={h.name}
         name={h.name} 
-        selected={i == props.h_idx}
+        selected={i == props.idx}
         displayDates={props.displayDates}
         streak={h.streak}
       />

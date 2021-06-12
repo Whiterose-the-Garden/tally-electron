@@ -8,8 +8,7 @@ const path = require('path')
 const url = require('url')
 const Store = require('electron-store')
 Store.initRenderer()
-// const store = new Store();
-// store.set('whiterose', {streak:[]})
+const store = new Store();
 // store.set('typing', {streak:[]})
 // store.set('piano', {streak:[]})
 // store.set('gym', {streak:[]})
