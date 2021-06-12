@@ -182,26 +182,23 @@ class App extends React.Component {
     }
   }
 
+  // TODO: Pre change or post change?
   handleDel = (del_idx, arg) => {
-    // let { range_len, view_range, h_idx, habits } = this.state
-    // h_idx = del_idx < h_idx || habits.length - 1 == h_idx ? h_idx - 1: h_idx
-    // if (view_range[1] === habits.length) {
-    //   if (habits.length < MAX_SHOW) {
-    //     view_range = [0, habits.length - 1]
-    //   } else {
-    //     view_range = [view_range[0] - 1, view_range[1] - 1] 
-    //     h_idx -= 1
-    //   }         
-    // }
-    // this.store.delete(arg)
-    // habits = this.toHabitList(this.store.store)
-    // range_len = Math.min(habits.length, MAX_SHOW)
-    // this.setState({
-    //   habits, 
-    //   range_len, 
-    //   view_range,
-    //   h_idx,
-    // }, this.debug)
+    let {start, end, habits, h_idx} = this.state
+    if (end === habits.length) {
+      end-- 
+      start = habits.length <= HABIT_LENGTH ? start : start-1
+    } 
+    h_idx = del_idx < h_idx || (h_idx + 1 == habits.length) ? h_idx - 1 : h_idx
+      
+    this.store.delete(arg)
+    habits = this.toHabitList(this.store.store)
+    this.setState({
+      habits, 
+      h_idx,
+      start,
+      end,
+    }, this.debug)
   }
 
   render() {
