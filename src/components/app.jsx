@@ -82,7 +82,7 @@ class App extends React.Component {
   down = () => {
     const { h_idx, start, end, habits } = this.state
     const tot_len = habits.length
-    const range_len = start - end
+    const range_len = end - start
     if (!range_len) return;
 
     // need to shift range
@@ -97,10 +97,10 @@ class App extends React.Component {
       this.setState({h_idx: h_idx+1})
     }
   }
-
+  
   up = () => {
     const { h_idx, start, end, habits } = this.state
-    const range_len = start - end
+    const range_len = end - start
     if (!range_len) return
 
     // need to shift range
@@ -150,7 +150,7 @@ class App extends React.Component {
       this.setState({command:value})
     }
   }
-
+  //TODO: disallow adding habits that are whitespace
   onKeyDown = (event) => {   
     const { mode, command, start, end } = this.state
     const range_len = end - start
@@ -169,8 +169,6 @@ class App extends React.Component {
           const growthVisible = habits.length <= HABIT_LENGTH
           this.setState({
             habits, 
-            // range_len: habits.length <= MAX_SHOW ? range_len + 1: range_len, 
-            // start: growthVisible ? [0, range_len+1] : view_range,
             end: growthVisible ? end+1 : end,
           }, this.debug)
         } else if (inst == ':del') {
@@ -189,7 +187,8 @@ class App extends React.Component {
       end-- 
       start = habits.length <= HABIT_LENGTH ? start : start-1
     } 
-    h_idx = del_idx < h_idx || (h_idx + 1 == habits.length) ? h_idx - 1 : h_idx
+    // deleted above or (deleted last habit in list and not the only habit)
+    h_idx = del_idx < h_idx || (h_idx + 1 == habits.length && habits.length !== 1) ? h_idx - 1 : h_idx
       
     this.store.delete(arg)
     habits = this.toHabitList(this.store.store)
