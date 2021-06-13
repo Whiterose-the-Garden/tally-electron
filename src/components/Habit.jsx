@@ -28,8 +28,6 @@ function Streak(props) {
   return streakList
 
   function sameDate(d1, d2) {
-    console.log(d1)
-    console.log(d2)
     return (
       d1.getDay() == d2.getDate() ||
       d1.getMonth() == d2.getMonth() ||
