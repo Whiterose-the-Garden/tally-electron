@@ -119,6 +119,6 @@ tr.selected > td:first-child {
 }
 
 .yay {
-  color: var(--highlight) /* !important */;
+  color: var(--highlight) !important;
 }
 

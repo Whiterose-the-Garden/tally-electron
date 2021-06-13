@@ -51,23 +51,34 @@ class App extends React.Component {
     Mousetrap.bind('j', this.down)
     Mousetrap.bind('k', this.up)
     Mousetrap.bind(':', this.enterCommand)
-    // Mousetrap.bind('enter', this.yay)
+    Mousetrap.bind('enter', this.yay)
   }
 
   componentWillUnmount() {
     Mousetrap.unbind('j')
     Mousetrap.unbind('k')
     Mousetrap.unbind(':')
-    // Mousetrap.unbind('enter')
+    Mousetrap.unbind('enter')
   }
 
   yay = () => {
-    // const { h_idx, habits, view_range } = this.state
-    // const h = habits[view_range[0] + h_idx]
-    // const { streak } = this.store.get(h.name)
-    // if (streak.length === 0) {
-      
-    // }
+    const { h_idx, habits, start, end } = this.state
+    const h = habits[h_idx]
+    const curr = new Date()
+    let { streak } = this.store.get(h.name)
+    if (!streak.length) {
+      streak.unshift(curr.getTime()) 
+    } else {
+      if (this.sameDate(curr, new Date(streak[0]))) {
+        streak.shift()
+      } else {
+        streak.unshift(curr.getTime())
+      }
+    }
+    this.store.set(h.name, {streak})
+    this.setState({
+      habits: this.toHabitList(this.store.store), 
+    })
     // change in db
     // reflect the change in view
   } 
@@ -83,7 +94,7 @@ class App extends React.Component {
     const { h_idx, start, end, habits } = this.state
     const tot_len = habits.length
     const range_len = end - start
-    if (!range_len) return;
+    if (!range_len) return
 
     // need to shift range
     if (h_idx + 1 == end) {
@@ -162,8 +173,8 @@ class App extends React.Component {
       if (com.length >= 2 && com[1].length <= 10) {
         const inst = com[0], arg = com[1]
         if (inst == ':add') {
-          // TODO: check that item doesn't already exit
           // TODO: disable node integration
+          if (this.store.has(arg)) return
           this.store.set(com[1], {streak:[]})  
           const habits = this.toHabitList(this.store.store)
           const growthVisible = habits.length <= HABIT_LENGTH

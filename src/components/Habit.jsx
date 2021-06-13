@@ -17,7 +17,8 @@ function Streak(props) {
   let j = 0
   for (let i in displayDates) {
     let d = displayDates[i]
-    if (j < streak.length && sameDate(d, streak[j])) {
+    // Will cause errors with custom list lengths
+    if (j < streak.length && sameDate(d, new Date(streak[j]))) {
       streakList.push(<td key={d.getDate()} className={"yay"}>·</td>)
     } else {
       streakList.push(<td key={d.getDate()}>·</td>)
@@ -27,6 +28,8 @@ function Streak(props) {
   return streakList
 
   function sameDate(d1, d2) {
+    console.log(d1)
+    console.log(d2)
     return (
       d1.getDay() == d2.getDate() ||
       d1.getMonth() == d2.getMonth() ||
