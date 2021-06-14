@@ -2,9 +2,11 @@ import React from 'react'
 import Table from './Table.jsx'
 import SelectedDate from './SelectedDate.jsx'
 import Command from './Command.jsx'
+import Storage from '../scripts/storage.js'
+import sameDate from '../scripts/CustomDate.js'
 
 const Mousetrap = require('mousetrap')
-const Store = require('electron-store')
+// const Storage = require('../scripts/storage.js')
 
 const TABLE = 0 
 const COMMAND = 1
@@ -17,9 +19,9 @@ class App extends React.Component {
 
   constructor(props) {
     super(props)
-    this.store = new Store()
+    this.storage = new Storage()
     this.commandRef = React.createRef()
-    const habits = this.toHabitList(this.store.store)
+    const habits = this.storage.getList()
     this.state = {
       curr_date: new Date(),
       h_idx: 0,
@@ -32,26 +34,11 @@ class App extends React.Component {
     console.log(this.state)
   }
 
-  //TODO: change how store is set up
-  //TODO:  - currently habits are sorted by name
-  toHabitList = (store) => {
-    return Object.keys(store)
-      .reduce((acc, name) => {
-        if (name !== "__internal__") {
-          acc.push({
-            name,
-            streak: store[name].streak,
-          })
-        }
-        return acc
-      }, [])
-  }
-
   componentDidMount() {
     Mousetrap.bind('j', this.down)
     Mousetrap.bind('k', this.up)
     Mousetrap.bind(':', this.enterCommand)
-    Mousetrap.bind('enter', this.yay)
+    Mousetrap.bind('enter', this.toggleDate)
   }
 
   componentWillUnmount() {
@@ -61,26 +48,14 @@ class App extends React.Component {
     Mousetrap.unbind('enter')
   }
 
-  yay = () => {
+  toggleDate = () => {
     const { h_idx, habits, start, end } = this.state
     const h = habits[h_idx]
     const curr = new Date()
-    let { streak } = this.store.get(h.name)
-    if (!streak.length) {
-      streak.unshift(curr.getTime()) 
-    } else {
-      if (this.sameDate(curr, new Date(streak[0]))) {
-        streak.shift()
-      } else {
-        streak.unshift(curr.getTime())
-      }
-    }
-    this.store.set(h.name, {streak})
+    this.storage.toggleDate(h.name, curr)
     this.setState({
-      habits: this.toHabitList(this.store.store), 
+      habits: this.storage.getList(), 
     })
-    // change in db
-    // reflect the change in view
   } 
 
   debug = () => { console.log(this.state) }
@@ -131,14 +106,6 @@ class App extends React.Component {
   //   const d = Date.now()
   // }
 
-  sameDate = (d1, d2) => {
-    return (
-      d1.getDay() == d2.getDate() ||
-      d1.getMonth() == d2.getMonth() ||
-      d1.getFullYear() == d2.getFullYear()
-    )
-  }
-
   getDisplayDates = () => {
     const { curr_date } = this.state
     const displayDates = []
@@ -173,10 +140,8 @@ class App extends React.Component {
       if (com.length >= 2 && com[1].length <= 10) {
         const inst = com[0], arg = com[1]
         if (inst == ':add') {
-          // TODO: disable node integration
-          if (this.store.has(arg)) return
-          this.store.set(com[1], {streak:[]})  
-          const habits = this.toHabitList(this.store.store)
+          this.storage.add(com[1])
+          const habits = this.storage.getList()
           const growthVisible = habits.length <= HABIT_LENGTH
           this.setState({
             habits, 
@@ -184,14 +149,13 @@ class App extends React.Component {
           }, this.debug)
         } else if (inst == ':del') {
           const del_idx = this.state.habits.findIndex((h) => h.name === com[1])
-          if (del_idx == -1) return
+          if (!this.storage.has(com[1])) return
           this.handleDel(del_idx, com[1])
         } 
       } 
     }
   }
 
-  // TODO: Pre change or post change?
   handleDel = (del_idx, arg) => {
     let {start, end, habits, h_idx} = this.state
     if (end === habits.length) {
@@ -201,8 +165,8 @@ class App extends React.Component {
     // deleted above or (deleted last habit in list and not the only habit)
     h_idx = del_idx < h_idx || (h_idx + 1 == habits.length && habits.length !== 1) ? h_idx - 1 : h_idx
       
-    this.store.delete(arg)
-    habits = this.toHabitList(this.store.store)
+    this.storage.del(arg)
+    habits = this.storage.getList()
     this.setState({
       habits, 
       h_idx,
