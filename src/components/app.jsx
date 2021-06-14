@@ -6,7 +6,6 @@ import Storage from '../scripts/storage.js'
 import sameDate from '../scripts/CustomDate.js'
 
 const Mousetrap = require('mousetrap')
-// const Storage = require('../scripts/storage.js')
 
 const TABLE = 0 
 const COMMAND = 1
@@ -49,6 +48,7 @@ class App extends React.Component {
   }
 
   toggleDate = () => {
+    console.log(this.state)
     const { h_idx, habits, start, end } = this.state
     const h = habits[h_idx]
     const curr = new Date()
@@ -128,6 +128,7 @@ class App extends React.Component {
       this.setState({command:value})
     }
   }
+
   //TODO: disallow adding habits that are whitespace
   onKeyDown = (event) => {   
     const { mode, command, start, end } = this.state

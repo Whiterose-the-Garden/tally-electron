@@ -25,16 +25,17 @@ export default function Storage() {
     const dict = this.store.get(HABIT_DICT) 
     let { streak } = dict[name]
     if (!streak.length) {
-      streak.unshift(curr.getTime())
+      streak.push(curr.getTime())
     } else {
       if (sameDate(curr, new Date(streak[0]))) {
         streak.shift() 
       } else { 
         streak.unshift(curr.getTime())      
       }
+      dict[name] = {streak}
     }
 
-    this.store.set(name, {streak})
+    this.store.set(HABIT_DICT, dict)
   }
   
   this.add = (name) => {

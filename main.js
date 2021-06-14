@@ -9,20 +9,6 @@ const url = require('url')
 const Store = require('electron-store')
 Store.initRenderer()
 const store = new Store();
-store.clear()
-store.set('habitDict', {})
-// store.set('typing', {streak:[]})
-// store.set('piano', {streak:[]})
-// store.set('gym', {streak:[]})
-// store.set('running', {streak:[]})
-// store.set('water', {streak:[]})
-// store.set('lifting', {streak:[]})
-// store.set('frenc', {streak:[]})
-// store.set('typing', {streak:[]})
-// store.set('git', {streak:[]})
-// store.set('tally', {streak:[]})
-// console.log(store.store)
-// Add React extension for development
 // const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer')
 
 // Keep a global reference of the window object, if you don't, the window will
