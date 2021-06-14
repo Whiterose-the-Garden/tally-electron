@@ -52,8 +52,9 @@ html {
   color: var(--f_low);
   background-color: var(--background);
   max-width: calc(var(--g_size) * 20 * 1px);
+  min-width: calc(var(--g_size) * 20 * 1px); /* 100% - 2 * padding */
   max-height: calc(11.5 * var(--g_size) * 1px);
-  width: calc(100% - var(--g_size) * 4 * 1px); /* 100% - 2 * padding */
+  /* width: calc(100% - var(--g_size) * 4 * 1px); /1* 100% - 2 * padding *1/ */
 }
 
 #control {

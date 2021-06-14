@@ -3,25 +3,18 @@
 'use strict'
 // console.log(__dirname);
 // Import parts of electron to use
-const { app, BrowserWindow } = require('electron')
+const { 
+  app, 
+  BrowserWindow,  
+  ipcMain,
+} = require('electron')
 const path = require('path')
 const url = require('url')
 const Store = require('electron-store')
-Store.initRenderer()
+// Store.initRenderer()
 const store = new Store();
-// store.clear()
-// store.set('typing', {streak:[]})
-// store.set('piano', {streak:[]})
-// store.set('gym', {streak:[]})
-// store.set('running', {streak:[]})
-// store.set('water', {streak:[]})
-// store.set('lifting', {streak:[]})
-// store.set('frenc', {streak:[]})
-// store.set('typing', {streak:[]})
-// store.set('git', {streak:[]})
-// store.set('tally', {streak:[]})
-// console.log(store.store)
-// Add React extension for development
+store.clear()
+store.set('habitDict', {'hello':{ streak:[]}})
 // const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer')
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -50,7 +43,9 @@ function createWindow() {
     height: 768, // height of the window
     show: false, // don't show until window is ready
     webPreferences: {
-      nodeIntegration: true
+      // nodeIntegration: true,
+      preload: path.join(__dirname, 'preload.js'),
+      contextIsolation: true,
     }
   })
 
@@ -97,6 +92,62 @@ function createWindow() {
     mainWindow = null
   })
 }
+
+
+const toHabitList = (habitDict) => {
+  return Object.keys(habitDict)
+    .reduce((acc, name) => {
+      acc.push({
+        name, 
+        streak: habitDict[name].streak,
+      })
+      return acc
+    }, [])
+}
+
+ipcMain.on('del', (e, name) => {
+  console.log(name)
+  const habitDict = store.get('habitDict')
+  e.returnValue = (name in habitDict)
+  if (name in habitDict) {
+    delete habitDict[name]
+    store.set('habitDict', habitDict)
+  }
+})
+
+ipcMain.on('has', (e, name) => {
+  console.log(name)
+  const habitDict = store.get('habitDict')
+  e.returnValue = (name in habitDict)
+})
+
+ipcMain.on('get', (e, name) => {
+  console.log(name)
+  const habitDict = store.get('habitDict')
+  e.returnValue = habitDict[name]
+})
+
+ipcMain.on('getList', (e) => {
+  const list = toHabitList(store.get('habitDict'))
+  console.log(list)
+  e.returnValue = list
+})
+
+ipcMain.on('set', (e, name) => {
+  console.log(name)
+  const habitDict = store.get('habitDict')
+  habitDict[name] = {streak:[]}
+  store.set('habitDict', habitDict)
+  e.returnValue = true
+})
+
+ipcMain.on('add', (e, name) => {
+  console.log(name)
+  const habitDict = store.get('habitDict')
+  habitDict[name] = {streak:[]}
+  store.set('habitDict', habitDict)
+  e.returnValue = true
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

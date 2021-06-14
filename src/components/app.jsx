@@ -1,10 +1,9 @@
 import React from 'react'
 import Table from './Table.jsx'
-import SelectedDate from './SelectedDate.jsx'
 import Command from './Command.jsx'
+import SelectedDate from './SelectedDate.jsx'
 
 const Mousetrap = require('mousetrap')
-const Store = require('electron-store')
 
 const TABLE = 0 
 const COMMAND = 1
@@ -17,9 +16,8 @@ class App extends React.Component {
 
   constructor(props) {
     super(props)
-    this.store = new Store()
     this.commandRef = React.createRef()
-    const habits = this.toHabitList(this.store.store)
+    const habits = []//window.store.getList()
     this.state = {
       curr_date: new Date(),
       h_idx: 0,
@@ -29,7 +27,6 @@ class App extends React.Component {
       command: '',
       mode: TABLE
     }
-    console.log(this.state)
   }
 
   //TODO: change how store is set up
@@ -62,23 +59,23 @@ class App extends React.Component {
   }
 
   yay = () => {
-    const { h_idx, habits, start, end } = this.state
-    const h = habits[h_idx]
-    const curr = new Date()
-    let { streak } = this.store.get(h.name)
-    if (!streak.length) {
-      streak.unshift(curr.getTime()) 
-    } else {
-      if (this.sameDate(curr, new Date(streak[0]))) {
-        streak.shift()
-      } else {
-        streak.unshift(curr.getTime())
-      }
-    }
-    this.store.set(h.name, {streak})
-    this.setState({
-      habits: this.toHabitList(this.store.store), 
-    })
+    // const { h_idx, habits, start, end } = this.state
+    // const h = habits[h_idx]
+    // const curr = new Date()
+    // let { streak } = this.store.get(h.name)
+    // if (!streak.length) {
+    //   streak.unshift(curr.getTime()) 
+    // } else {
+    //   if (this.sameDate(curr, new Date(streak[0]))) {
+    //     streak.shift()
+    //   } else {
+    //     streak.unshift(curr.getTime())
+    //   }
+    // }
+    // this.store.set(h.name, {streak})
+    // this.setState({
+    //   habits: this.toHabitList(this.store.store), 
+    // })
     // change in db
     // reflect the change in view
   } 
@@ -173,10 +170,12 @@ class App extends React.Component {
       if (com.length >= 2 && com[1].length <= 10) {
         const inst = com[0], arg = com[1]
         if (inst == ':add') {
-          // TODO: disable node integration
-          if (this.store.has(arg)) return
-          this.store.set(com[1], {streak:[]})  
-          const habits = this.toHabitList(this.store.store)
+          const contain = this.state.habits.findIndex((h) => h.name === com[1]) !== -1
+          if (contain) return
+          console.log('start')
+          window.store.set(com[1])
+          console.log('end')
+          const habits = window.store.getList()
           const growthVisible = habits.length <= HABIT_LENGTH
           this.setState({
             habits, 
@@ -201,8 +200,8 @@ class App extends React.Component {
     // deleted above or (deleted last habit in list and not the only habit)
     h_idx = del_idx < h_idx || (h_idx + 1 == habits.length && habits.length !== 1) ? h_idx - 1 : h_idx
       
-    this.store.delete(arg)
-    habits = this.toHabitList(this.store.store)
+    window.store.delete(arg)
+    habits = window.store.getList()
     this.setState({
       habits, 
       h_idx,
@@ -230,6 +229,7 @@ class App extends React.Component {
         /> 
         <div id='control'>
           <SelectedDate date={curr_date} />
+
           <Command 
             command={command} 
             active={COMMAND === mode}
