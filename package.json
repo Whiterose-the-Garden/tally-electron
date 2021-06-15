@@ -1,11 +1,13 @@
 {
-  "name": "Whiterose",
-  "version": "1.0.0",
+  "name": "Tally",
+  "version": "0.0.1",
   "description": "",
   "main": "main.js",
   "scripts": {
-    "prod": "webpack --mode production --config webpack.build.config.js",
-    "start": "webpack serve --config=./webpack.dev.config.js --mode development"
+    "prod": "webpack --mode production --config webpack.build.config.js && electron --noDevServer .",
+    "start": "webpack serve --config=./webpack.dev.config.js --mode development",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +18,19 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
+  "build": {
+    "appId": "com.electron.tally",
+    "productName": "Tally",
+    "files": [
+      "*.jsx",
+      "*.js",
+      "*.css",
+      "*.html",
+      "node_modules",
+      "dist",
+      "build"
+    ]
+  },
   "devDependencies": {
     "@babel/core": "^7.14.3",
     "@babel/preset-react": "^7.12.10",
@@ -23,6 +38,7 @@
     "babili-webpack-plugin": "^0.1.2",
     "css-loader": "^5.2.6",
     "electron": "^11.4.8",
+    "electron-builder": "^22.11.7",
     "electron-devtools-installer": "^3.1.1",
     "electron-packager": "^15.2.0",
     "file-loader": "^6.2.0",

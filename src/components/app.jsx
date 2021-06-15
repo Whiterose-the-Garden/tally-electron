@@ -18,6 +18,7 @@ class App extends React.Component {
 
   constructor(props) {
     super(props)
+    console.log('is this updating?')
     this.storage = new Storage()
     this.commandRef = React.createRef()
     const habits = this.storage.getList()
@@ -48,7 +49,6 @@ class App extends React.Component {
   }
 
   toggleDate = () => {
-    console.log(this.state)
     const { h_idx, habits, start, end } = this.state
     const h = habits[h_idx]
     const curr = new Date()
@@ -150,7 +150,7 @@ class App extends React.Component {
           }, this.debug)
         } else if (inst == ':del') {
           const del_idx = this.state.habits.findIndex((h) => h.name === com[1])
-          if (!this.storage.has(com[1])) return
+          if (del_idx == -1) return
           this.handleDel(del_idx, com[1])
         } 
       } 
