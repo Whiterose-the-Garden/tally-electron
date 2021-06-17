@@ -12,13 +12,12 @@ const COMMAND = 1
 const HABIT = 2 
 
 const DATE_LENGTH = 14
-const HABIT_LENGTH = 5
+const HABIT_LENGTH = 10
 
 class App extends React.Component {
 
   constructor(props) {
     super(props)
-    console.log('is this updating?')
     this.storage = new Storage()
     this.commandRef = React.createRef()
     const habits = this.storage.getList()
@@ -129,7 +128,6 @@ class App extends React.Component {
     }
   }
 
-  //TODO: disallow adding habits that are whitespace
   onKeyDown = (event) => {   
     const { mode, command, start, end } = this.state
     const range_len = end - start
@@ -138,7 +136,7 @@ class App extends React.Component {
     } else if (event.code === 'Enter') {
       const com = command.split(' ')
       // TODO: prob refactor soon
-      if (com.length >= 2 && com[1].length <= 10) {
+      if (com.length >= 2 && 0 < com[1].length && com[1].length <= 10) {
         const inst = com[0], arg = com[1]
         if (inst == ':add') {
           this.storage.add(com[1])

@@ -44,6 +44,14 @@ html {
   display: flex;
   justify-content: center;
   align-items: center;
+  /* remove scrollbar */
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
 }
 
 #app {

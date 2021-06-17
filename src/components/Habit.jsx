@@ -1,4 +1,5 @@
 import React from 'react'
+import { sameDate } from '../scripts/CustomDate.js'
 
 function Habit(props) {
   return (
@@ -17,23 +18,14 @@ function Streak(props) {
   let j = 0
   for (let i in displayDates) {
     let d = displayDates[i]
-    // Will cause errors with custom list lengths
     if (j < streak.length && sameDate(d, new Date(streak[j]))) {
-      streakList.push(<td key={d.getDate()} className={"yay"}>·</td>)
+      streakList.push(<td key={d.getDate()} className={'yay'}>·</td>)
+      j += 1
     } else {
       streakList.push(<td key={d.getDate()}>·</td>)
     }
-    j += 1
   }
   return streakList
-
-  function sameDate(d1, d2) {
-    return (
-      d1.getDay() == d2.getDate() ||
-      d1.getMonth() == d2.getMonth() ||
-      d1.getFullYear() == d2.getFullYear()
-    )
-  }
 }
 
 export default Habit
