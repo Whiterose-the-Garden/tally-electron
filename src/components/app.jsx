@@ -12,7 +12,7 @@ const COMMAND = 1
 const HABIT = 2 
 
 const DATE_LENGTH = 14
-const HABIT_LENGTH = 10
+const HABIT_LENGTH = 5
 
 class App extends React.Component {
 

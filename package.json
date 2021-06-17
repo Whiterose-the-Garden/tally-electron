@@ -23,12 +23,10 @@
     "productName": "Tally",
     "files": [
       "*.jsx",
-      "*.js",
+      "main.js",
       "*.css",
       "*.html",
-      "node_modules",
-      "dist",
-      "build"
+      "node_modules"
     ]
   },
   "devDependencies": {
