@@ -3,7 +3,7 @@ import Table from './Table.jsx'
 import SelectedDate from './SelectedDate.jsx'
 import Command from './Command.jsx'
 import Storage from '../scripts/storage.js'
-import sameDate from '../scripts/CustomDate.js'
+import { sameDate } from '../scripts/CustomDate.js'
 
 const Mousetrap = require('mousetrap')
 
@@ -52,15 +52,17 @@ class App extends React.Component {
     const h = habits[h_idx]
     const curr = new Date()
     this.storage.toggleDate(h.name, curr)
-    this.setState({
+    this.setState(this.modState({
       habits: this.storage.getList(), 
-    })
+    }))
   } 
 
   debug = () => { console.log(this.state) }
 
   enterCommand = () => {
-    this.setState({ mode: COMMAND })
+    this.setState(this.modState({ 
+      mode: COMMAND 
+    }))
     this.commandRef.current.focus()
   }
 
@@ -74,12 +76,12 @@ class App extends React.Component {
     if (h_idx + 1 == end) {
       // only shift if not at end  
       const at_end = end == tot_len
-      this.setState({
+      this.setState(this.modState({
         start: at_end ? start: start+1,
         end: at_end ? end: end+1,
-      })
+      }))
     } else {
-      this.setState({h_idx: h_idx+1})
+      this.setState(this.modState({h_idx: h_idx+1}))
     }
   }
   
@@ -92,18 +94,22 @@ class App extends React.Component {
     if (h_idx == start) {
       // only shift if not at start
       const at_end = start == 0
-      this.setState({
+      this.setState(this.modState({
         start: at_end ? start: start-1,
         end: at_end ? end: end-1,
-      })
+      }))
     } else {
-      this.setState({h_idx: h_idx-1})
+      this.setState(this.modState({h_idx: h_idx-1}))
     }
   }
 
-  // updateDay = () => {
-  //   const d = Date.now()
-  // }
+  modState = (obj) => {
+    const d = new Date()
+    if (!sameDate(this.state.curr_date, d)) {
+      obj.curr_date = d
+    }
+    return obj
+  }
 
   getDisplayDates = () => {
     const { curr_date } = this.state
@@ -119,20 +125,17 @@ class App extends React.Component {
 
   onChange = (event) => {
     let value = event.target.value
-    if (!value) {
-      this.setState({command:':'})
-    } else if (value[0] != ':') {
-      this.setState({command:':' + value})
-    } else {
-      this.setState({command:value})
-    }
+    this.setState(this.modState({ 
+      command: value[0] !== ':' ? ':' + value : value
+    }))
   }
 
+  // TODO: prevent whitespace habits
   onKeyDown = (event) => {   
     const { mode, command, start, end } = this.state
     const range_len = end - start
     if (event.code === 'Escape') {
-      this.setState({mode: TABLE, command: ''})
+      this.setState(this.modState({mode: TABLE, command: ''}))
     } else if (event.code === 'Enter') {
       const com = command.split(' ')
       // TODO: prob refactor soon
@@ -142,10 +145,10 @@ class App extends React.Component {
           this.storage.add(com[1])
           const habits = this.storage.getList()
           const growthVisible = habits.length <= HABIT_LENGTH
-          this.setState({
+          this.setState(this.modState({
             habits, 
             end: growthVisible ? end+1 : end,
-          }, this.debug)
+          }), this.debug)
         } else if (inst == ':del') {
           const del_idx = this.state.habits.findIndex((h) => h.name === com[1])
           if (del_idx == -1) return
@@ -166,12 +169,12 @@ class App extends React.Component {
       
     this.storage.del(arg)
     habits = this.storage.getList()
-    this.setState({
+    this.setState(this.modState({
       habits, 
       h_idx,
       start,
       end,
-    }, this.debug)
+    }), this.debug)
   }
 
   render() {
