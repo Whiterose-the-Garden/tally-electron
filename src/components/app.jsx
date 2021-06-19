@@ -20,8 +20,15 @@ class App extends React.Component {
     super(props)
     this.storage = new Storage()
     this.commandRef = React.createRef()
+    this.appRef = React.createRef()
     const habits = this.storage.getList()
-    this.state = {
+    this.state = this.reloadFreshState()
+    console.log(this.state)
+  }
+
+  reloadFreshState = () => {
+    const habits = this.storage.getList()
+    return {
       curr_date: new Date(),
       h_idx: 0,
       start: 0,
@@ -30,7 +37,6 @@ class App extends React.Component {
       command: '',
       mode: TABLE
     }
-    console.log(this.state)
   }
 
   componentDidMount() {
@@ -38,6 +44,8 @@ class App extends React.Component {
     Mousetrap.bind('k', this.up)
     Mousetrap.bind(':', this.enterCommand)
     Mousetrap.bind('enter', this.toggleDate)
+    // this.appRef.current.addEventListener('dragover', this.drag)
+    // this.appRef.current.addEventListener('drop', this.drop)
   }
 
   componentWillUnmount() {
@@ -45,6 +53,28 @@ class App extends React.Component {
     Mousetrap.unbind('k')
     Mousetrap.unbind(':')
     Mousetrap.unbind('enter')
+  }
+
+  drag = (e) => {
+    e.preventDefault() 
+    e.stopPropagation()
+    e.dataTransfer.dropEffect = 'copy'
+  }
+
+  drop = (e) => {
+    e.preventDefault() 
+    e.stopPropagation()
+    const file = e.dataTransfer.files[0]
+    if (!file || !file.name) return;
+    const reader = new FileReader()
+    reader.onload = (e) => {
+      if(this.storage.load(e.target.result)) {
+        console.log('1')
+        this.setState(this.reloadFreshState(), this.debug)
+        console.log('2')
+      }
+    }
+    reader.readAsText(file)
   }
 
   toggleDate = () => {
@@ -130,7 +160,6 @@ class App extends React.Component {
     }))
   }
 
-  // TODO: prevent whitespace habits
   onKeyDown = (event) => {   
     const { mode, command, start, end } = this.state
     const range_len = end - start
@@ -154,6 +183,10 @@ class App extends React.Component {
           if (del_idx == -1) return
           this.handleDel(del_idx, com[1])
         } 
+      } else if (com.length == 1) {
+        if (com[0] === ':export') {
+          this.storage.export()
+        }
       } 
     }
   }
@@ -188,7 +221,10 @@ class App extends React.Component {
     } = this.state
     const displayDates = this.getDisplayDates()
     return (
-      <div id='app'>
+      <div id='app'
+        onDragOver={this.drag}
+        onDrop={this.drop}
+      >
         <Table 
           habits={habits.slice(start, end)}
           idx={h_idx - start} 

@@ -1,8 +1,10 @@
 import { sameDate } from './CustomDate.js'
 
 const Store = require('electron-store')
+const fs = require('fs')
 
 const HABIT_DICT = 'habitDict'
+const STORAGE_FILE_NAME = 'storage.json'
 
 export default function Storage() {
   this.store = new Store() 
@@ -61,4 +63,34 @@ export default function Storage() {
     }
   }
 
+  this.load = (data) => {
+    //check integrity of data
+    if (this.validStorage(data)) {
+      const newStorage = JSON.parse(data)
+      console.log(newStorage)
+      this.store.set(HABIT_DICT, newStorage)
+      return true
+    } 
+    return false
+  }
+
+  this.export = () => {
+    const json = this.store.has(HABIT_DICT) ? 
+      this.store.get(HABIT_DICT) : {}
+    fs.writeFile(STORAGE_FILE_NAME, JSON.stringify(json), ()=>{})  
+  }
+
+  this.validStorage = (s) => {
+    try {
+      const newStorage = JSON.parse(s)
+      return Object.keys(newStorage).every((key) => {
+        if (0 < key.length && key.length <= 10 && !/\s/g.test(key)) {
+          return Array.isArray(newStorage[key].streak) && 
+            newStorage[key].streak.every((a) => typeof a === 'number')
+        }
+        return false
+      })
+    } catch (e) {}
+    return false
+  }
 }
