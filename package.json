@@ -7,7 +7,9 @@
     "prod": "webpack --mode production --config webpack.build.config.js && electron --noDevServer .",
     "start": "webpack serve --config=./webpack.dev.config.js --mode development",
     "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "dist": "electron-builder --mac --win",
+    "dist:mac": "electron-builder --mac",
+    "dist:win": "electron-builder --win"
   },
   "keywords": [],
   "author": "",
@@ -27,7 +29,8 @@
       "node_modules/",
       "dist/",
       "!dist/Tally*",
-      "!dist/mac"
+      "!dist/mac",
+      "!dist/win-unpacked"
     ],
     "compression": "maximum",
     "asar": true

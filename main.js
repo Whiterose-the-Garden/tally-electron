@@ -41,9 +41,9 @@ function createWindow() {
     minHeight: 100,
     backgroundColor: '#000',
     show: false, // don't show until window is ready
-    frame: false,
+    frame: process.platform !== 'darwin',
     skipTaskbar: true,
-    autoHideMenuBar: true,
+    autoHideMenuBar: process.platform === 'darwin',
     webPreferences: {
       nodeIntegration: true
     },
