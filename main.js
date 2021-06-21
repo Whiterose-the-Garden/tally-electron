@@ -1,7 +1,6 @@
 // main.js
 
 'use strict'
-// console.log(__dirname);
 // Import parts of electron to use
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
@@ -13,8 +12,7 @@ const store = new Store();
 const HABIT_DICT = 'habitDict'
 if (!store.has(HABIT_DICT)) store.set(HABIT_DICT, {})
 // const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer')
-// Keep a global reference of the window object, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
+//
 let mainWindow
 
 // Keep a reference for dev mode

@@ -13,6 +13,11 @@ const HABIT = 2
 
 const DATE_LENGTH = 14
 const HABIT_LENGTH = 10
+const CHAR_LIMIT = 10
+
+const ADD = ':add'
+const DEL = ':del'
+const EXPORT = ':export'
 
 class App extends React.Component {
 
@@ -44,8 +49,6 @@ class App extends React.Component {
     Mousetrap.bind('k', this.up)
     Mousetrap.bind(':', this.enterCommand)
     Mousetrap.bind('enter', this.toggleDate)
-    // this.appRef.current.addEventListener('dragover', this.drag)
-    // this.appRef.current.addEventListener('drop', this.drop)
   }
 
   componentWillUnmount() {
@@ -69,9 +72,7 @@ class App extends React.Component {
     const reader = new FileReader()
     reader.onload = (e) => {
       if(this.storage.load(e.target.result)) {
-        console.log('1')
-        this.setState(this.reloadFreshState(), this.debug)
-        console.log('2')
+        this.modState(this.reloadFreshState())
       }
     }
     reader.readAsText(file)
@@ -82,17 +83,17 @@ class App extends React.Component {
     const h = habits[h_idx]
     const curr = new Date()
     this.storage.toggleDate(h.name, curr)
-    this.setState(this.modState({
+    this.modState({
       habits: this.storage.getList(), 
-    }))
+    })
   } 
 
   debug = () => { console.log(this.state) }
 
   enterCommand = () => {
-    this.setState(this.modState({ 
+    this.modState({ 
       mode: COMMAND 
-    }))
+    })
     this.commandRef.current.focus()
   }
 
@@ -106,12 +107,12 @@ class App extends React.Component {
     if (h_idx + 1 == end) {
       // only shift if not at end  
       const at_end = end == tot_len
-      this.setState(this.modState({
+      this.modState({
         start: at_end ? start: start+1,
         end: at_end ? end: end+1,
-      }))
+      })
     } else {
-      this.setState(this.modState({h_idx: h_idx+1}))
+      this.modState({h_idx: h_idx+1})
     }
   }
   
@@ -124,12 +125,12 @@ class App extends React.Component {
     if (h_idx == start) {
       // only shift if not at start
       const at_end = start == 0
-      this.setState(this.modState({
+      this.modState({
         start: at_end ? start: start-1,
         end: at_end ? end: end-1,
-      }))
+      })
     } else {
-      this.setState(this.modState({h_idx: h_idx-1}))
+      this.modState({h_idx: h_idx-1})
     }
   }
 
@@ -138,7 +139,7 @@ class App extends React.Component {
     if (!sameDate(this.state.curr_date, d)) {
       obj.curr_date = d
     }
-    return obj
+    this.setState(obj, this.debug)
   }
 
   getDisplayDates = () => {
@@ -155,59 +156,75 @@ class App extends React.Component {
 
   onChange = (event) => {
     let value = event.target.value
-    this.setState(this.modState({ 
+    this.modState({ 
       command: value[0] !== ':' ? ':' + value : value
-    }))
+    })
   }
 
   onKeyDown = (event) => {   
     const { mode, command, start, end } = this.state
     const range_len = end - start
     if (event.code === 'Escape') {
-      this.setState(this.modState({mode: TABLE, command: ''}))
+      this.modState({mode: TABLE, command: ''})
     } else if (event.code === 'Enter') {
-      const com = command.split(' ')
-      // TODO: prob refactor soon
-      if (com.length >= 2 && 0 < com[1].length && com[1].length <= 10) {
-        const inst = com[0], arg = com[1]
-        if (inst == ':add') {
-          this.storage.add(com[1])
-          const habits = this.storage.getList()
-          const growthVisible = habits.length <= HABIT_LENGTH
-          this.setState(this.modState({
-            habits, 
-            end: growthVisible ? end+1 : end,
-          }), this.debug)
-        } else if (inst == ':del') {
-          const del_idx = this.state.habits.findIndex((h) => h.name === com[1])
-          if (del_idx == -1) return
-          this.handleDel(del_idx, com[1])
-        } 
-      } else if (com.length == 1) {
-        if (com[0] === ':export') {
-          this.storage.export()
-        }
-      } 
+      this.controller(command)
     }
   }
 
-  handleDel = (del_idx, arg) => {
+  // object: grouping of related functions
+  // function: no individual state
+  // ideally access to modState
+  controller = (command) => {
+    const [inst, arg] = command.split(' ')
+    switch (inst) {
+      case ADD:
+        if (!arg || arg.length > CHAR_LIMIT) return;
+        this.handleAdd(arg)         
+        break;
+      case DEL:
+        if (!arg || arg.length > CHAR_LIMIT) return;
+        this.handleDel(arg)
+        break;
+      case EXPORT:
+        this.storage.export()
+        break;
+    }
+  }
+
+  handleAdd = (arg) => {
+    this.storage.add(arg)
+    const habits = this.storage.getList()
+    const growthVisible = habits.length <= HABIT_LENGTH
+    const { end } = this.state
+    this.modState({
+      habits, 
+      end: growthVisible ? end+1 : end,
+    })
+  }
+
+  handleDel = (arg) => {
+    const del_idx = this.state.habits.findIndex(
+      (h) => h.name === arg)
+    if (del_idx == -1) return;
     let {start, end, habits, h_idx} = this.state
     if (end === habits.length) {
       end-- 
       start = habits.length <= HABIT_LENGTH ? start : start-1
     } 
-    // deleted above or (deleted last habit in list and not the only habit)
-    h_idx = del_idx < h_idx || (h_idx + 1 == habits.length && habits.length !== 1) ? h_idx - 1 : h_idx
+    // deleted above or 
+    // (deleted last habit in list and not the only habit)
+    h_idx = del_idx < h_idx || 
+      (h_idx + 1 == habits.length && habits.length !== 1) 
+      ? h_idx - 1 : h_idx
       
     this.storage.del(arg)
     habits = this.storage.getList()
-    this.setState(this.modState({
+    this.modState({
       habits, 
       h_idx,
       start,
       end,
-    }), this.debug)
+    })
   }
 
   render() {

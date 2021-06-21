@@ -1,0 +1,3 @@
+* after enter, remove the argument but not command
+":add asdf (enter)" => ":add "
+* delete habit without going 

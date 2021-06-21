@@ -24,4 +24,4 @@ You can export your data with the `:export` command. The command will create `st
 ## Inspirations
 * [Left](https://github.com/hundredrabbits/Left)
 * [Orca](https://github.com/hundredrabbits/Orca) 
-* [dijo](https://github.com/NerdyPepper/dijo).
+* [dijo](https://github.com/NerdyPepper/dijo)
