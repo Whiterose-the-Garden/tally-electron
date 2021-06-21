@@ -12,7 +12,7 @@ const COMMAND = 1
 const HABIT = 2 
 
 const DATE_LENGTH = 14
-const HABIT_LENGTH = 10
+const HABIT_LENGTH = 5
 const CHAR_LIMIT = 10
 
 const ADD = ':add'
@@ -49,6 +49,7 @@ class App extends React.Component {
     Mousetrap.bind('k', this.up)
     Mousetrap.bind(':', this.enterCommand)
     Mousetrap.bind('enter', this.toggleDate)
+    Mousetrap.bind('d d', this.handleDel)
   }
 
   componentWillUnmount() {
@@ -56,6 +57,7 @@ class App extends React.Component {
     Mousetrap.unbind('k')
     Mousetrap.unbind(':')
     Mousetrap.unbind('enter')
+    Mousetrap.unbind('d d')
   }
 
   drag = (e) => {
@@ -107,12 +109,12 @@ class App extends React.Component {
     if (h_idx + 1 == end) {
       // only shift if not at end  
       const at_end = end == tot_len
-      this.modState({
+      this.setState({
         start: at_end ? start: start+1,
         end: at_end ? end: end+1,
       })
     } else {
-      this.modState({h_idx: h_idx+1})
+      this.setState({h_idx: h_idx+1})
     }
   }
   
@@ -125,12 +127,12 @@ class App extends React.Component {
     if (h_idx == start) {
       // only shift if not at start
       const at_end = start == 0
-      this.modState({
+      this.setState({
         start: at_end ? start: start-1,
         end: at_end ? end: end-1,
       })
     } else {
-      this.modState({h_idx: h_idx-1})
+      this.setState({h_idx: h_idx-1})
     }
   }
 
@@ -156,7 +158,7 @@ class App extends React.Component {
 
   onChange = (event) => {
     let value = event.target.value
-    this.modState({ 
+    this.setState({ 
       command: value[0] !== ':' ? ':' + value : value
     })
   }
@@ -181,10 +183,6 @@ class App extends React.Component {
         if (!arg || arg.length > CHAR_LIMIT) return;
         this.handleAdd(arg)         
         break;
-      case DEL:
-        if (!arg || arg.length > CHAR_LIMIT) return;
-        this.handleDel(arg)
-        break;
       case EXPORT:
         this.storage.export()
         break;
@@ -192,32 +190,34 @@ class App extends React.Component {
   }
 
   handleAdd = (arg) => {
-    this.storage.add(arg)
+    const added = this.storage.add(arg)
     const habits = this.storage.getList()
     const growthVisible = habits.length <= HABIT_LENGTH
-    const { end } = this.state
+    const { end, command } = this.state
     this.modState({
+      command: added ? ADD + ' ' : command,
       habits, 
       end: growthVisible ? end+1 : end,
     })
   }
 
   handleDel = (arg) => {
-    const del_idx = this.state.habits.findIndex(
-      (h) => h.name === arg)
-    if (del_idx == -1) return;
     let {start, end, habits, h_idx} = this.state
-    if (end === habits.length) {
-      end-- 
-      start = habits.length <= HABIT_LENGTH ? start : start-1
-    } 
-    // deleted above or 
-    // (deleted last habit in list and not the only habit)
-    h_idx = del_idx < h_idx || 
-      (h_idx + 1 == habits.length && habits.length !== 1) 
-      ? h_idx - 1 : h_idx
-      
-    this.storage.del(arg)
+    if (!habits.length) return;
+    const name = habits[h_idx].name
+    // 4 cases
+    // there are extras on left/right or not
+    if (end === habits.length) { //none on right
+      end--;
+      // none on left?
+      start = habits.length <= HABIT_LENGTH 
+        ? start : start-1
+    }
+
+    // last element and not the only element
+    if (h_idx === habits.length - 1 && 
+      habits.length !== 1) h_idx--
+    this.storage.del(name)
     habits = this.storage.getList()
     this.modState({
       habits, 

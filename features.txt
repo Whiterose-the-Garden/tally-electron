@@ -1,3 +1,4 @@
-* after enter, remove the argument but not command
-":add asdf (enter)" => ":add "
 * delete habit without going 
+* be able to rearrange habits
+* tells user if something is wrong
+  * e.g. adding failed
