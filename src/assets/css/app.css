@@ -68,7 +68,7 @@ html {
 
 #control {
   position: relative; 
-  margin-top: calc(var(--g_size) / 2);
+  margin-top: calc(var(--g_size) / 2 * 1px);
   max-width: calc(var(--g_size) * 20 * 1px);
   width: 100%;
   height: calc(var(--g_size) * 1px);

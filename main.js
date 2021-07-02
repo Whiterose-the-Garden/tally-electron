@@ -9,7 +9,8 @@ const Store = require('electron-store')
 const fs = require('fs')
 Store.initRenderer()
 const store = new Store();
-const HABIT_DICT = 'habitDict'
+// const HABIT_DICT = 'habitDict'
+const HABIT_DICT = 'devDict'
 if (!store.has(HABIT_DICT)) store.set(HABIT_DICT, {})
 // const { default: installExtension, REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer')
 //
@@ -22,6 +23,8 @@ let dev = false
 if (process.defaultApp || /[\\/]electron-prebuilt[\\/]/.test(process.execPath) || /[\\/]electron[\\/]/.test(process.execPath)) {
   dev = true
 }
+
+
 
 // Temporary fix for broken high-dpi scale fctor on Windows (125% scaling)
 // info: https://github.com/electron/electron/issues/9691

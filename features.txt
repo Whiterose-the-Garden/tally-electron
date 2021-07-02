@@ -1,4 +1,4 @@
-* delete habit without going 
 * be able to rearrange habits
 * tells user if something is wrong
-  * e.g. adding failed
+  * e.g. export failed
+* electron dev/prod share the same store

@@ -136,6 +136,7 @@ class App extends React.Component {
     }
   }
 
+  // setState, but check for date change 
   modState = (obj) => {
     const d = new Date()
     if (!sameDate(this.state.curr_date, d)) {
@@ -144,6 +145,7 @@ class App extends React.Component {
     this.setState(obj, this.debug)
   }
 
+  // get array of 14 days
   getDisplayDates = () => {
     const { curr_date } = this.state
     const displayDates = []
@@ -237,16 +239,18 @@ class App extends React.Component {
       mode,
     } = this.state
     const displayDates = this.getDisplayDates()
+    const content = mode !== HABIT ? 
+          <Table 
+            habits={habits.slice(start, end)}
+            idx={h_idx - start} 
+            displayDates={displayDates}
+          />  : <div></div>
     return (
       <div id='app'
         onDragOver={this.drag}
         onDrop={this.drop}
       >
-        <Table 
-          habits={habits.slice(start, end)}
-          idx={h_idx - start} 
-          displayDates={displayDates}
-        /> 
+        {{content}}
         <div id='control'>
           <SelectedDate date={curr_date} />
           <Command 
