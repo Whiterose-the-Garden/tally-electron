@@ -1,7 +1,5 @@
 # tally
 
-**I have chosen to stop development of Tally using electron because the app size is over 180mb, which I consider unacceptable.**
-
 Tally is a keyboard driven, minmalistic habit tracker. 
 
 ## Commands
