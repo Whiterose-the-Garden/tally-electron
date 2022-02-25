@@ -48,7 +48,7 @@ class App extends React.Component {
     Mousetrap.bind('j', this.down)
     Mousetrap.bind('k', this.up)
     Mousetrap.bind(':', this.enterCommand)
-    Mousetrap.bind('enter', this.toggleDate)
+    Mousetrap.bind('nter', this.toggleDate)
     Mousetrap.bind('d d', this.handleDel)
   }
 
@@ -250,7 +250,7 @@ class App extends React.Component {
         onDragOver={this.drag}
         onDrop={this.drop}
       >
-        {{content}}
+        {content}
         <div id='control'>
           <SelectedDate date={curr_date} />
           <Command 
